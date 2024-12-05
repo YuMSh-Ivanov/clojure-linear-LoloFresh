@@ -3,13 +3,13 @@
 (defn operation [f & vector]
   (apply mapv f vector))
 
-(defn v+ (partial operation +))
+(def v+ (partial operation +))
 
-(defn v- (partial operation -))
+(def v- (partial operation -))
 
-(defn v* (partial operation +))
+(def v* (partial operation *))
 
-(defn vd (partial operation /))
+(def vd (partial operation /))
 
 (defn dot [& vectors]
   (if (empty? vectors)
@@ -20,13 +20,13 @@
   (let [prod (apply * scalars)]
     (mapv #(* % prod) vector)))
 
-(defn m+ (partial operation v+))
+(def m+ (partial operation v+))
 
-(defn m- (partial operation v-))
+(def m- (partial operation v-))
 
-(defn m* (partial operation v*))
+(def m* (partial operation v*))
 
-(defn md (partial operation vd))
+(def md (partial operation vd))
 
 (defn m*s [matrices & scalars]
   (operation #(apply v*s % scalars) matrices))
