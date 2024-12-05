@@ -3,48 +3,42 @@
 (defn operation [f & vector]
   (apply mapv f vector))
 
-(defn v+ [& vectors]
-  (apply operation + vectors))
+(defn v+ (partial operation +))
 
-(defn v- [& vectors]
-  (apply operation - vectors))
+(defn v- (partial operation -))
 
-(defn v* [& vectors]
-  (apply operation * vectors))
+(defn v* (partial operation +))
 
-(defn vd [& vectors]
-  (apply operation / vectors))
+(defn vd (partial operation /))
 
 (defn dot [& vectors]
-  (if (empty? vectors) 0
-  (reduce + (apply v* vectors))))
+  (if (empty? vectors)
+    0
+    (apply + (apply v* vectors))))
 
 (defn v*s [vector & scalars]
   (let [prod (apply * scalars)]
-    (operation #(* % prod) vector)))
+    (mapv #(* % prod) vector)))
 
-(defn m+ [& matrices]
-  (apply operation v+ matrices))
+(defn m+ (partial operation v+))
 
-(defn m- [& matrices]
-  (apply operation v- matrices))
+(defn m- (partial operation v-))
 
-(defn m* [& matrices]
-  (apply operation v* matrices))
+(defn m* (partial operation v*))
 
-(defn md [& matrices]
-  (apply operation vd matrices))
+(defn md (partial operation vd))
 
 (defn m*s [matrices & scalars]
-  (let [prod (apply * scalars)]
-    (operation #(operation (fn [param1] (* param1 prod)) %) matrices)))
+  (operation #(apply v*s % scalars) matrices))
 
-(defn transpose [matrices]
-  (apply operation vector matrices))
+(defn transpose [m]
+  (apply operation vector m))
 
 
-(defn m*v [matrices vector]
-  (operation #(dot vector %) matrices))
+(defn m*v [m vector]
+  (mapv #(dot vector %) m))
 
 (defn m*m [& matrices]
-  (reduce  (fn [A, B] (operation #(m*v (transpose B) %) A)) matrices))
+  (reduce (fn [a, b]
+            (operation #(m*v (transpose b) %) a))
+          matrices))
